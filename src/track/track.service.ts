@@ -5,21 +5,25 @@ import { Model, ObjectId } from 'mongoose'
 import { Comment } from '@app/track/schemas/comment.schema'
 import { CreateTrackDto } from '@app/track/dto/create-track.dto'
 import { CreateCommentDto } from '@app/track/dto/create-comment.dto'
+import { FileService, FileType } from '@app/file/file.service'
 
 @Injectable()
 export class TrackService {
 	constructor(
 		@InjectModel(Track.name) private trackModel: Model<TrackDocument>,
-		@InjectModel(Comment.name) private commentModel: Model<TrackDocument>
+		@InjectModel(Comment.name) private commentModel: Model<TrackDocument>,
+		private fileService: FileService
 	) {}
 
-	async create(dto: CreateTrackDto): Promise<Track> {
-		const track = await this.trackModel.create({...dto, listens: 0})
+	async create(dto: CreateTrackDto, picture, audio): Promise<Track> {
+		const audioPath = await this.fileService.create(FileType.AUDIO, audio)
+		const picturePath = await this.fileService.create(FileType.IMAGE, picture)
+		const track = await this.trackModel.create({...dto, listens: 0, audio: audioPath, picture: picturePath})
 		return track
 	}
 
 	async getAll(): Promise<Track[]> {
-		const tracks = await this.trackModel.find()
+		const tracks = await this.trackModel.find().populate('comments')
 		return tracks
 	}
 
