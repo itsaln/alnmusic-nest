@@ -18,12 +18,19 @@ export class TrackService {
 	async create(dto: CreateTrackDto, picture, audio): Promise<Track> {
 		const audioPath = await this.fileService.create(FileType.AUDIO, audio)
 		const picturePath = await this.fileService.create(FileType.IMAGE, picture)
-		const track = await this.trackModel.create({...dto, listens: 0, audio: audioPath, picture: picturePath})
+		const track = await this.trackModel.create({ ...dto, listens: 0, audio: audioPath, picture: picturePath })
 		return track
 	}
 
-	async getAll(): Promise<Track[]> {
-		const tracks = await this.trackModel.find().populate('comments')
+	async getAll(count = 10, offset = 0): Promise<Track[]> {
+		const tracks = await this.trackModel.find().skip(offset).limit(count)
+		return tracks
+	}
+
+	async search(query: string): Promise<Track[]> {
+		const tracks = await this.trackModel.find({
+			name: { $regex: new RegExp(query, 'i') }
+		})
 		return tracks
 	}
 
@@ -39,10 +46,16 @@ export class TrackService {
 
 	async addComment(dto: CreateCommentDto): Promise<Comment> {
 		const track = await this.trackModel.findById(dto.trackId)
-		const comment = await this.commentModel.create({...dto})
+		const comment = await this.commentModel.create({ ...dto })
 		track.comments.push(comment._id)
 		await track.save()
 		// @ts-ignore
 		return comment
+	}
+
+	async listen(id: ObjectId) {
+		const track = await this.trackModel.findById(id)
+		track.listens += 1
+		track.save()
 	}
 }
