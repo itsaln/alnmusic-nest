@@ -28,7 +28,5 @@ export class FileService {
 		}
 	}
 
-	async remove(fileName: string) {
-
-	}
+	async remove(fileName: string) {}
 }

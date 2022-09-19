@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Track, TrackDocument } from '@app/track/schemas/track.schema'
-import { Model, ObjectId } from 'mongoose'
-import { Comment } from '@app/track/schemas/comment.schema'
+import {Model, ObjectId} from 'mongoose'
+import {Comment, CommentDocument} from '@app/track/schemas/comment.schema'
 import { CreateTrackDto } from '@app/track/dto/create-track.dto'
 import { CreateCommentDto } from '@app/track/dto/create-comment.dto'
 import { FileService, FileType } from '@app/file/file.service'
@@ -11,7 +11,7 @@ import { FileService, FileType } from '@app/file/file.service'
 export class TrackService {
 	constructor(
 		@InjectModel(Track.name) private trackModel: Model<TrackDocument>,
-		@InjectModel(Comment.name) private commentModel: Model<TrackDocument>,
+		@InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
 		private fileService: FileService
 	) {}
 
@@ -23,7 +23,7 @@ export class TrackService {
 	}
 
 	async getAll(count = 10, offset = 0): Promise<Track[]> {
-		const tracks = await this.trackModel.find().skip(offset).limit(count)
+		const tracks = await this.trackModel.find().skip(Number(offset)).limit(Number(count))
 		return tracks
 	}
 
