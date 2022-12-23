@@ -1,11 +1,11 @@
 {
-  "name": "alnmusic-nest",
+  "name": "alnmusic-api",
   "version": "0.0.1",
   "description": "Music platform",
   "author": {
     "email": "itsaln23@gmail.com",
-    "name": "Aladin scorp.uz",
-    "url": "https://scorp.uz"
+    "name": "Aladin itsaln.web.app",
+    "url": "https://itsaln.web.app"
   },
   "private": true,
   "license": "UNLICENSED",
